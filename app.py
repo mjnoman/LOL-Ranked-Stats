@@ -75,8 +75,7 @@ def index():
         #charsFixed = champNameFix(chars)
         
         #Set all champ names to lowercase to render images
-        for each in champNameList:
-            each = each.lower()
+        chars = fixNames(chars)
 
         #Grab match data
         matchIDs = []
@@ -124,6 +123,11 @@ def rankNameFix(capital):
     for each in capital:
         correctName += each.lower()
     return correctName.capitalize()
+
+def fixNames(chars):
+    for i in range(len(chars)):
+        chars[i] = chars[i].lower()
+    return chars
 
 #If used it will convert internal champion name strings to match actual names
 def champNameFix(chName):
