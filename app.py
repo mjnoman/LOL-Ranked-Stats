@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request
 import urllib.request, json
 import math
-import config
+import os
 
 app = Flask(__name__)
 
@@ -14,7 +14,7 @@ def index():
         #Grabbing data and initializing variables passed to page
         region = request.form.get('region')
         summName = request.form.get('name')
-        aKey = config.key
+        aKey = os.environ.get('api_key')
 
         #Replace any space with ascii value
         if(summName is not None):
