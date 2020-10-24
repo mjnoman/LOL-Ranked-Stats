@@ -73,6 +73,10 @@ def index():
         
         #If names need to be presented, this will fixed internal names
         #charsFixed = champNameFix(chars)
+        
+        #Set all champ names to lowercase to render images
+        for each in champNameList:
+            each = each.lower()
 
         #Grab match data
         matchIDs = []
