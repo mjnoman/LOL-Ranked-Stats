@@ -1,0 +1,16 @@
+html {
+	width : auto;
+	height : auto;
+}
+
+.welcome {
+  text-align : center;
+  padding-bottom : 50px;
+  color : #00bc8c;
+}
+
+.stats {
+  color : #00ec8f;
+  text-align : center;
+  border : 5px solid black;
+}

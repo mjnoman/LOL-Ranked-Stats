@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <title>League of Legends Ranked Match Stats</title>
+  </head>
+  <body>
+    <div class="welcome"><h1>Check Your Recent League of Legends Match History</h1></div>
+    <form action="/" method="POST" style="text-align:center" id="searchForm">
+      <div class="summName">
+        <div>
+			<input style="width: 400px; height : 25px; text-align: center;" type="text" placeholder="Summoner Name" name="name">
+        </div>
+		<div>
+          <select style="width:250px; height : 25px;" id="region" name="region">
+            <option selected>Choose Server</option>
+            <option>NA</option>
+            <option>EUW</option>
+            <option>KR</option>
+            <option>EUN</option>
+            <option>OC</option>
+            <option>RU</option>
+            <option>JP</option>
+            <option>BR</option>
+            <option>TR</option>
+            <option>LAN</option>
+            <option>LAS</option>
+          </select>
+        </div>
+       </div>
+	  </div>
+	<button style="margin-top: 25px" type="submit" value="Submit" class="btn btn-secondary">Submit</button>
+    </form>
+    <div class="stats">
+      <h2 style="display:inline">
+        {% if summName %}
+          {{ summName }}<br>
+          League : <img src="static/Emblem_{{rankTier}}.png" style="width:75px; height:75px"></img> {{ rankTier }} {{ divTier}}<br>
+          {{ leagueP }} LP<br>
+		  Win Ratio : {{ winPct }}%<br>
+          {{ wins }} W | <h2 style="color:red; display:inline;">{{ losses }} L</h2><br>
+        {% endif %}
+      </h2>
+    </div>
+  <div class="champs" style="text-align : center;">
+    <h4>
+      {% if champs %}
+        <u>Recent Champion Picks:</u><br>
+      {% endif %}
+      {% for item in champs %}
+        <img src="static/{{item}}.png" style="width: 40px; height: 40px" alt="{{ item }}"/>
+      {% endfor %}
+        </ul>
+    </h4>
+  </div>
+  {% for item in matchData %}
+    <p>{{ item }}</p>
+  {% endfor %}
+  </body>
+</html>

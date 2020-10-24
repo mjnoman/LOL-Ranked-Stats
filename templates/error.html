@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename="bootstrap.min.css") }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename="styles.css") }}">
+    <title>{{ title }}</title>
+  </head>
+  <body>
+    <h1 style="text-align:center; padding-bottom: 50px; color: #00bc8c;">Check Your League of Legends Ranked Match Stats</h1>
+    <h4 style="text-align:center; padding-bottom: 30px; color: #00bc8c;">There seems to have been an error. Please try inputting server name and Summoner Name again.</h4>
+    <form action="/" method="POST" style="text-align:center" id="searchForm">
+      <div class="summName">
+        <div style="align-content: center; width: 800px; margin: 0 auto;" class="row">
+        <div class="form-group col-sm-3">
+          <label for="region">Server</label>
+          <select id="region" name="region" class="form-control">
+            <option selected>Choose..</option>
+            <option>NA</option>
+            <option>EUW</option>
+            <option>KR</option>
+            <option>EUN</option>
+            <option>OC</option>
+            <option>RU</option>
+            <option>JP</option>
+            <option>BR</option>
+            <option>TR</option>
+            <option>LAN</option>
+            <option>LAS</option>
+          </select>
+        </div>
+        <div class="form-group col-sm-3">
+        <input style="width: 400px; height: 60px; text-align: center" type="text" placeholder="Summoner Name" name="name"><br>
+      </div></div></div>
+      <button style="margin-top: 75px" type="submit" value="Submit" class="btn btn-secondary">Submit</button>
+    </form>
+  </body>
+</html>
