@@ -13,6 +13,10 @@ def index():
     if request.method == 'POST':
         #Grabbing data and initializing variables passed to page
         region = request.form.get('region')
+        
+        #If region isn't Korea or Russia, need to add a 1 to region
+        if region != 'KR' and region != 'RU':
+            region += '1'
         summName = request.form.get('name')
         aKey = os.environ.get('api_key')
 
@@ -48,7 +52,7 @@ def index():
         except:
             return render_template('error.html')
 
-        #Grab data from the return json 
+        #Grab data from the return json
         rankedTier = rankStat[0]['tier']
         rankTier = rankNameFix(rankedTier)
         divTier = rankStat[0]['rank']
@@ -70,10 +74,10 @@ def index():
             for each in champNameList:
                 if (int(champNameList[each]['key']) == champId and champNameList[each]['id'] not in chars):
                     chars.append(champNameList[each]['id'])
-        
+
         #If names need to be presented, this will fixed internal names
         #charsFixed = champNameFix(chars)
-        
+
         #Set all champ names to lowercase to render images
         chars = fixNames(chars)
 
@@ -81,39 +85,108 @@ def index():
         matchIDs = []
         matchData = []
 
-        for i in range(1):
+        for i in range(10):
             tempMatchResult = recentMatch['matches'][i]
             matchIDs.append(tempMatchResult['gameId'])
-        
+
         for each in matchIDs:
             try:
                 matchData.append(getData(region, 'fourth', each, aKey))
             except:
                 return render_template('error.html')
+        bansBlue = []
+        bansRed = []
+        
+        fullBlueData = []
+        fullRedData = []
+        partId = []
+        partName = []
+        partChamp = []
+        strData = []
+        minion = []
+        level = []
+        num = 0
+        #Grab all data from each side
+        for each in matchData:
+            gameDurationSec = each['gameDuration']
+
+            blueId = each['teams'][0]['teamId']
+            winStatBlue = each['teams'][0]['win']
+            
+            for all in each['teams'][0]['bans']:
+                bansBlue.append(all['championId'])
+
+            redId = each['teams'][1]['teamId']
+            winStatRed = each['teams'][1]['win']
+            
+            for all in each['teams'][1]['bans']:
+                bansRed.append(all['championId'])
 
 
-
+            
+            for i in range(10):
+                partId.append(each['participants'][i]['participantId'])
+                partName.append(each['participantIdentities'][partId[i] - 1]['player']['summonerName'])
+                partChamp.append(each['participants'][i]['championId'])
+                strData.append(str(each['participants'][i]['stats']['kills']) + '/' + str(each['participants'][i]['stats']['deaths']) + '/' + str(each['participants'][i]['stats']['assists']))
+                minion.append(each['participants'][i]['stats']['totalMinionsKilled'] + each['participants'][i]['stats']['neutralMinionsKilled'] + each['participants'][i]['stats']['neutralMinionsKilledTeamJungle'] + each['participants'][i]['stats']['neutralMinionsKilledEnemyJungle'])
+                level.append(each['participants'][i]['stats']['champLevel'])
+            
+            for i in range(5):
+                if type(partName[i + num]) == 'str':
+                    fullBlueData.append(partName[i + num] + "\t" + strData[i + num] + '\t' + str(minion[i + num]) + " CS\tLevel " + str(level[i + num]))
+                else:
+                    fullBlueData.append(partName[i + num] + "\t" + strData[i + num] + '\t' + str(minion[i + num]) + " CS\tLevel " + str(level[i + num]))
+            for i in range(5, 10):
+                if type(partName[i + num]) == 'str':
+                    fullRedData.append(partName[i + num] + "\t" + strData[i + num] + '\t' + str(minion[i + num]) + " CS\tLevel " + str(level[i + num]))
+                else:
+                    fullRedData.append(partName[i + num] + "\t" + strData[i + num] + '\t' + str(minion[i + num]) + " CS\tLevel " + str(level[i + num]))
+            num = num + 10
+        teamChamps = []
+        for champId in partChamp:
+            for each in champNameList:
+                if (int(champNameList[each]['key']) == champId):
+                    teamChamps.append(champNameList[each]['id'])
+        teamChamps = fixNames(teamChamps)
+        redTeamChamps = []
+        blueTeamChamps = []
+        
+        for i in range(0, len(teamChamps)):
+            if (i%10 == 0) or (i%10 == 1) or (i%10 == 2) or (i%10 == 3) or (i%10 == 4):
+                blueTeamChamps.append(teamChamps[i])
+            else:
+                redTeamChamps.append(teamChamps[i])
+        #for i in range(5):
+        #    blueTeamChamps.append(teamChamps[i])
+        #for i in range(5,10):
+        #    redTeamChamps.append(teamChamps[i])
+        
         #Remove space ascii value and return the spaces to the name
         if(summName is not None):
             summName = summName.replace('%20', ' ')
-        
+
+        statsStyle = "border : 4px solid black;"
         #Render the html page, passing each of the grabbed values
-        return render_template('index.html', summName=summName, matchData=matchData, champs=chars, rankTier=rankTier, divTier = divTier, leagueP = leagueP, wins = wins, losses = losses, winPct = winPct)
+        return render_template('index.html', summName=summName, blueTeam=fullBlueData, blueTeamCh=blueTeamChamps, 
+                                redTeam=fullRedData, redTeamCh=redTeamChamps, champs=chars, rankTier=rankTier, 
+                                divTier = divTier, leagueP = leagueP, wins = wins, losses = losses, 
+                                statsStyle=statsStyle, winPct = winPct)
     else:
         return render_template('index.html')
 
 #Sends api requests(or download from ddragon) to Riot Games for user info
 def getData(region, urlCh, urlFin, aKey):
     if(urlCh == 'first'):
-        url = "https://"+region+"1.api.riotgames.com/lol/summoner/v4/summoners/by-name/"+urlFin+"?api_key="+aKey
+        url = "https://"+region+".api.riotgames.com/lol/summoner/v4/summoners/by-name/"+urlFin+"?api_key="+aKey
     elif(urlCh == 'second'):
-        url = "https://"+region+"1.api.riotgames.com/lol/match/v4/matchlists/by-account/"+urlFin+"?api_key="+aKey
+        url = "https://"+region+".api.riotgames.com/lol/match/v4/matchlists/by-account/"+urlFin+"?api_key="+aKey
     elif(urlCh == 'third'):
-        url = "https://"+region+"1.api.riotgames.com/lol/league/v4/entries/by-summoner/"+urlFin+"?api_key="+aKey
+        url = "https://"+region+".api.riotgames.com/lol/league/v4/entries/by-summoner/"+urlFin+"?api_key="+aKey
     elif(urlCh == 'fourth'):
-        url = "https://"+region+"1.api.riotgames.com/lol/match/v4/matches/"+str(urlFin)+"?api_key="+aKey
+        url = "https://"+region+".api.riotgames.com/lol/match/v4/matches/"+str(urlFin)+"?api_key="+aKey
     else:
-        url = "https://ddragon.leagueoflegends.com/cdn/10.16.1/data/en_US/champion.json"
+        url = "https://ddragon.leagueoflegends.com/cdn/10.23.1/data/en_US/champion.json"
     jsonData = urllib.request.urlopen(url).read()
     return json.loads(jsonData)
 

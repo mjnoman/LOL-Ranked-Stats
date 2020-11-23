@@ -1,4 +1,4 @@
-html {
+html, body {
 	width : auto;
 	height : auto;
 }
@@ -12,5 +12,4 @@ html {
 .stats {
   color : #00ec8f;
   text-align : center;
-  border : 5px solid black;
 }
